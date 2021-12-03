@@ -44,39 +44,7 @@
     ;; so we can just use just "libssl.so".
     ;; More info at https://github.com/cl-plus-ssl/cl-plus-ssl/pull/2.
     (:openbsd "libcrypto.so")
-    (:darwin (:or "/opt/local/lib/libcrypto.dylib"                ;; MacPorts
-                  "/sw/lib/libcrypto.dylib"                       ;; Fink
-                  "/usr/local/opt/openssl/lib/libcrypto.dylib"    ;; Homebrew
-                  "/opt/homebrew/opt/openssl/lib/libcrypto.dylib" ;; Homebrew Arm64
-                  "/usr/local/lib/libcrypto.dylib" ;; personalized install
-
-                  ;; System-provided libraries. Must be loaded from files with
-                  ;; names that include version explicitly, instead of any versionless
-                  ;; symlink file. Otherwise macOS crushes the process (starting from
-                  ;; macOS > 10.15 that was just a warning, and finally macOS >= 11
-                  ;; crashes the process with a fatal error)
-                  ;;
-                  ;; Please note that in macOS >= 11.0, these paths may not exist in the
-                  ;; file system anymore, but trying to load them via dlopen will work. This
-                  ;; is because macOS ships all system-provided libraries as a single
-                  ;; dyld_shared_cache bundle.
-                  "/usr/lib/libcrypto.44.dylib"
-                  "/usr/lib/libcrypto.42.dylib"
-                  "/usr/lib/libcrypto.41.dylib"
-                  "/usr/lib/libcrypto.35.dylib"
-
-                  ;; The default old system libcrypto, versionless file name,
-                  ;; which may have insufficient crypto and can cause
-                  ;; process crash on macOS >= 11. Currently we
-                  ;; are protected from the crash by the presense of
-                  ;; the versioned paths above, but in fiew years,
-                  ;; after those exacty versioned paths are not available,
-                  ;; the crash may re-appear. So eventially we will
-                  ;; need to delete the unversioned paths.
-                  ;; Keeping them for a while for compatibility.
-                  ;; See https://github.com/cl-plus-ssl/cl-plus-ssl/pull/115
-                  "libcrypto.dylib"
-                  "/usr/lib/libcrypto.dylib"))
+    (:darwin "/usr/local/opt/openssl/lib/libcrypto.dylib")
     ((and :unix (not :cygwin)) (:or "libcrypto.so.1.1"
                                     "libcrypto.so.1.0.0"
                                     "libcrypto.so"))
@@ -92,23 +60,7 @@
     ;; (missing TLSv1_[1,2]_XXX methods,
     ;; see https://github.com/cl-plus-ssl/cl-plus-ssl/issues/56)
     ;; so first try to load possible custom installations of libssl
-    (:darwin (:or "/opt/local/lib/libssl.dylib"                ;; MacPorts
-                  "/sw/lib/libssl.dylib"                       ;; Fink
-                  "/usr/local/opt/openssl/lib/libssl.dylib"    ;; Homebrew
-                  "/opt/homebrew/opt/openssl/lib/libssl.dylib" ;; Homebrew Arm64
-                  "/usr/local/lib/libssl.dylib" ;; personalized install
-
-                  ;; System-provided libraries, with version in the file name.
-                  ;; See the comment for the corresponding libcryto equivalents above.
-                  "/usr/lib/libssl.46.dylib"
-                  "/usr/lib/libssl.44.dylib"
-                  "/usr/lib/libssl.43.dylib"
-                  "/usr/lib/libssl.35.dylib"
-
-                  ;; Default system libssl, versionless file name.
-                  ;; See the coment for the corresponding libcrypto.
-                  "libssl.dylib"
-                  "/usr/lib/libssl.dylib"))
+    (:darwin "/usr/local/opt/openssl/lib/libssl.dylib")
     (:solaris (:or "/lib/64/libssl.so"
                    "libssl.so.0.9.8" "libssl.so" "libssl.so.4"))
     ;; Unlike some other systems, OpenBSD linker,
